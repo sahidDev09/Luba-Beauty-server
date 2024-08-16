@@ -8,7 +8,7 @@ const port = process.env.PORT || 8000;
 app.use(express.json());
 
 const middleOption = {
-  origin: ["http://localhost:5173", "http://localhost:5174"],
+  origin: ["http://localhost:5173", "https://lubabeauty-8277b.web.app"],
   credentials: true,
   optionSuccessStatus: 204,
 };
@@ -30,14 +30,45 @@ async function run() {
     // await client.connect();
     console.log("Connected to MongoDB successfully!");
 
-    // All-collection
+    // Collection reference
     const allProducts = client.db("LubaBeauty").collection("products");
 
-    // All routes
+    // Products route with search and category filter
     app.get("/products", async (req, res) => {
       try {
-        const result = await allProducts.find().toArray();
-        res.json(result);
+        const page = parseInt(req.query.page) || 1; // Current page number (default: 1)
+        const limit = parseInt(req.query.limit) || 6; // Number of products per page (default: 6)
+        const searchQuery = req.query.search || ""; // Search query
+        const category = req.query.category || "all"; // Category filter
+
+        // Calculate the number of documents to skip
+        const skip = (page - 1) * limit;
+
+        // Create a search filter
+        const searchFilter = {
+          ...(searchQuery && {
+            Product_Name: { $regex: searchQuery, $options: "i" },
+          }),
+          ...(category !== "all" && { Category: category }),
+        };
+
+        // Fetch products with pagination and search filter
+        const result = await allProducts
+          .find(searchFilter)
+          .skip(skip)
+          .limit(limit)
+          .toArray();
+
+        // Count the total number of documents matching the search filter
+        const totalProducts = await allProducts.countDocuments(searchFilter);
+
+        // Send paginated response with product data and metadata
+        res.json({
+          totalProducts,
+          totalPages: Math.ceil(totalProducts / limit),
+          currentPage: page,
+          products: result,
+        });
       } catch (err) {
         console.error("Error fetching products:", err);
         res.status(500).send("Internal Server Error");
