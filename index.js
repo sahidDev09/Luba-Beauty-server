@@ -10,7 +10,7 @@ app.use(express.json());
 const middleOption = {
   origin: ["http://localhost:5173", "http://localhost:5174"],
   credentials: true,
-  optionSuccessStatus: 204, // Changed to 204 as it's the standard for preflight responses
+  optionSuccessStatus: 204,
 };
 app.use(cors(middleOption));
 
