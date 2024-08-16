@@ -32,6 +32,7 @@ async function run() {
 
     // Collection reference
     const allProducts = client.db("LubaBeauty").collection("products");
+    const homeProducts = client.db("LubaBeauty").collection("homeProducts");
 
     // Products route with search and category filter
     app.get("/products", async (req, res) => {
@@ -73,6 +74,13 @@ async function run() {
         console.error("Error fetching products:", err);
         res.status(500).send("Internal Server Error");
       }
+    });
+
+    //api for home page
+
+    app.get("/homeProducts", async (req, res) => {
+      const result = await homeProducts.find().toArray();
+      res.json(result);
     });
   } catch (err) {
     console.error("Failed to connect to MongoDB:", err);
