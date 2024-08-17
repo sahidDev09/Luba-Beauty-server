@@ -41,6 +41,7 @@ async function run() {
         const limit = parseInt(req.query.limit) || 6; // Number of products per page (default: 6)
         const searchQuery = req.query.search || ""; // Search query
         const category = req.query.category || "all"; // Category filter
+        const brand = req.query.brand || "all";
 
         // Calculate the number of documents to skip
         const skip = (page - 1) * limit;
@@ -51,6 +52,7 @@ async function run() {
             Product_Name: { $regex: searchQuery, $options: "i" },
           }),
           ...(category !== "all" && { Category: category }),
+          ...(brand !== "all" && { Brand: brand }),
         };
 
         // Fetch products with pagination and search filter
