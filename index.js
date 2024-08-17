@@ -37,11 +37,13 @@ async function run() {
     // Products route with search and category filter
     app.get("/products", async (req, res) => {
       try {
-        const page = parseInt(req.query.page) || 1; // Current page number (default: 1)
-        const limit = parseInt(req.query.limit) || 6; // Number of products per page (default: 6)
-        const searchQuery = req.query.search || ""; // Search query
-        const category = req.query.category || "all"; // Category filter
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 6;
+        const searchQuery = req.query.search || "";
+        const category = req.query.category || "all";
         const brand = req.query.brand || "all";
+        const minPrice = parseFloat(req.query.minPrice) || 0;
+        const maxPrice = parseFloat(req.query.maxPrice) || 500;
 
         // Calculate the number of documents to skip
         const skip = (page - 1) * limit;
@@ -53,6 +55,8 @@ async function run() {
           }),
           ...(category !== "all" && { Category: category }),
           ...(brand !== "all" && { Brand: brand }),
+          ...(minPrice && { Price: { $gte: minPrice } }),
+          ...(maxPrice && { Price: { $lte: maxPrice } }),
         };
 
         // Fetch products with pagination and search filter
