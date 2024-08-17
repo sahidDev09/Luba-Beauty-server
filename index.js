@@ -34,7 +34,7 @@ async function run() {
     const allProducts = client.db("LubaBeauty").collection("products");
     const homeProducts = client.db("LubaBeauty").collection("homeProducts");
 
-    // Products route with search and category filter
+    //all routes
     app.get("/products", async (req, res) => {
       try {
         const page = parseInt(req.query.page) || 1;
@@ -44,11 +44,11 @@ async function run() {
         const brand = req.query.brand || "all";
         const minPrice = parseFloat(req.query.minPrice) || 0;
         const maxPrice = parseFloat(req.query.maxPrice) || 500;
+        const sortBy = req.query.sortBy || "priceAsc";
 
-        // Calculate the number of documents to skip
         const skip = (page - 1) * limit;
 
-        // Create a search filter
+        // Create filter
         const searchFilter = {
           ...(searchQuery && {
             Product_Name: { $regex: searchQuery, $options: "i" },
@@ -59,17 +59,25 @@ async function run() {
           ...(maxPrice && { Price: { $lte: maxPrice } }),
         };
 
-        // Fetch products with pagination and search filter
+        //sorting
+        let sortOrder = {};
+        if (sortBy === "priceAsc") {
+          sortOrder = { Price: 1 };
+        } else if (sortBy === "priceDesc") {
+          sortOrder = { Price: -1 };
+        } else if (sortBy === "dateAdded") {
+          sortOrder = { Creation_date_time: -1 };
+        }
+
         const result = await allProducts
           .find(searchFilter)
+          .sort(sortOrder)
           .skip(skip)
           .limit(limit)
           .toArray();
 
-        // Count the total number of documents matching the search filter
         const totalProducts = await allProducts.countDocuments(searchFilter);
 
-        // Send paginated response with product data and metadata
         res.json({
           totalProducts,
           totalPages: Math.ceil(totalProducts / limit),
