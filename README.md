@@ -1,4 +1,5 @@
 Copy code
+
 # Luba Beauty Server
 
 Luba Beauty is an online cosmetics shop. This repository contains the backend server for the Luba Beauty platform. The server is built using Node.js and Express, with MongoDB as the database. It includes features like reusable JSON data, pagination, sorting, categorization, price range filtering, and search functionality.
@@ -22,7 +23,7 @@ Luba Beauty is an online cosmetics shop. This repository contains the backend se
 
 ## Live Site
 
-Check out the live site: [Luba Beauty](your-live-site-link)
+Check out the live site: [Luba Beauty]("https://lubabeauty-8277b.web.app")
 
 ## Installation
 
@@ -41,16 +42,17 @@ Make sure you have the following installed:
    git clone https://github.com/your-username/luba-beauty-server.git
    cd luba-beauty-server
 
+   ```
+
 2. **Install dependencies:**
 
-* bash
-* Copy code
-* npm install
-* Set up environment variables:
+- bash
+- Copy code
+- npm install
+- Set up environment variables:
 
 **Create a .env file in the root directory and add the following variables:**
 
-
 # License
-This project is licensed under the iamsahidofficial99@gmail.com License. See the LICENSE file for more details.
 
+This project is licensed under the iamsahidofficial99@gmail.com License. See the LICENSE file for more details.
